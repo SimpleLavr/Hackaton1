@@ -18,8 +18,6 @@ public interface IStorageService {
 
     Path store(File file) throws Exception;
 
-    Path store(InputStream inputStream, String fileName) throws Exception;
-
     Path load(String filename);
 
     List<Path> loadAll();

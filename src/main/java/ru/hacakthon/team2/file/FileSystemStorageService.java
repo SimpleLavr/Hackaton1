@@ -45,12 +45,6 @@ public class FileSystemStorageService implements IStorageService {
     }
 
     @Override
-    public Path store(InputStream inputStream, String fileName) throws Exception {
-        Files.copy(inputStream, storageLocation.resolve(fileName));
-        return storageLocation.resolve(fileName);
-    }
-
-    @Override
     public Path load(String filename) {
         return storageLocation.resolve(filename);
     }

@@ -15,21 +15,16 @@ public class FileController {
     @Autowired
     private IStorageService storageService;
 
-    @Autowired
-    private ZipArchiver zipArchiver;
-
     @PostMapping
     public ResponseEntity<?> uploadFile(@RequestBody MultipartFile file) throws Exception {
         Path savedFile = null;
-        if(!file.getResource().getFilename().endsWith(".zip")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is not zip archive");
+        if(!file.getResource().getFilename().endsWith(".csv")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is not csv table");
         try {
             savedFile = storageService.store(file);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
-        zipArchiver.unpack(savedFile);
         return ResponseEntity.status(HttpStatus.OK).body("Ok");
     }
 }
