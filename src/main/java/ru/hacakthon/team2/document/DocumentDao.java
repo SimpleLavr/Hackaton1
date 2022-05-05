@@ -3,6 +3,7 @@ package ru.hacakthon.team2.document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 import ru.hacakthon.team2.doctype.Doctype;
 import ru.hacakthon.team2.doctype.DoctypeDao;
 import ru.hacakthon.team2.utils.SqlUtils;
@@ -10,6 +11,7 @@ import ru.hacakthon.team2.utils.SqlUtils;
 import java.sql.ResultSet;
 import java.util.List;
 
+@Component
 public class DocumentDao {
 
     private final String TABLE_NAME = "documents";
@@ -22,10 +24,11 @@ public class DocumentDao {
 
     public void create(List<String> fieldValues, Long doctypeId, String original) {
 
-        StringBuilder query = new StringBuilder().append("insert into documents(id,doctype_id,original,fields_values) values(")
+        StringBuilder query = new StringBuilder().append("insert into documents(doctype_id,original,fields_values) values(")
                 .append(doctypeId + ",")
                 .append("\'" + original + "\',")
-                .append("\'" + SqlUtils.toSqlArray(fieldValues) + "\');");
+                .append(SqlUtils.toSqlArray(fieldValues) + ");");
+        System.out.println(query.toString());
         jdbcTemplate.execute(query.toString());
     }
 

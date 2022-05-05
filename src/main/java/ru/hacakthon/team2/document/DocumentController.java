@@ -1,6 +1,5 @@
 package ru.hacakthon.team2.document;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +24,8 @@ public class DocumentController {
     DoctypeDao doctypeDao;
 
     @GetMapping
-    public String getDocumentsByDoctype(@PathVariable(required = true) Long doctype) throws Exception {
-        return documentDao.getAllByDoctypeInJson(doctype);
+    public String getDocumentsByDoctype(@RequestParam(required = true) Long doctypeId) throws Exception {
+        return documentDao.getAllByDoctypeInJson(doctypeId);
     }
 
     @GetMapping("/{id}")

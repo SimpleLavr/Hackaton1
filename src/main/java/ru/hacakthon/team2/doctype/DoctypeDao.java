@@ -45,7 +45,7 @@ public class DoctypeDao {
     }
 
     public Doctype getById(Long id) {
-        List<Doctype> resultList = jdbcTemplate.query("select * " + TABLE_NAME + "where id=?;", new DoctypeRowMapper(), new Object[]{id});
+        List<Doctype> resultList = jdbcTemplate.query("select * from " + TABLE_NAME + " where id=?;", new DoctypeRowMapper(), new Object[]{id});
         if(resultList.isEmpty()) return null;
         else return resultList.get(0);
     }
