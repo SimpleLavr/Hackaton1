@@ -27,6 +27,7 @@ public class DoctypeController {
 
     @PostMapping
     public void create(@RequestBody Doctype doctype) {
+        if(!doctype.getOriginalLocationUrl().endsWith("/")) doctype.setOriginalLocationUrl(doctype.getOriginalLocationUrl() + "/");
         doctypeDao.create(doctype);
     }
 

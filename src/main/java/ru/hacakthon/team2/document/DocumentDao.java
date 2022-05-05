@@ -1,5 +1,7 @@
 package ru.hacakthon.team2.document;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -32,60 +34,70 @@ public class DocumentDao {
         jdbcTemplate.execute(query.toString());
     }
 
-    public String getAllByDoctypeInJson(Long doctypeId) throws Exception {
+    public List<Document> getAllByDoctype(Long doctypeId) throws Exception {
         Doctype doctype = doctypeDao.getById(doctypeId);
         if(doctype == null) throw new Exception("No doctype with this id");
 
-        List<Document> documentList = jdbcTemplate.query("select * from ? where doctype_id=?", new DocumentRowMapper(), new Object[]{TABLE_NAME, doctypeId});
+        List<Document> documentList = jdbcTemplate.query("select * from " + TABLE_NAME + " where doctype_id = " + doctypeId + ";", new DocumentRowMapper());
 
-        StringBuilder json = new StringBuilder().append("[");
-
-        for (Document document : documentList
-             ) {
-            json.append(",").append(documentToJson(document,doctype));
-        }
-        json.deleteCharAt(1);
-        return json.toString();
+        return documentList;
     }
 
     Document getById(Long id) {
-        List<Document> result = jdbcTemplate.query("select * from ? whre id=", new DocumentRowMapper(), new Object[]{TABLE_NAME,id});
+        List<Document> result = jdbcTemplate.query("select * from " + TABLE_NAME + " where id=" + id + ";", new DocumentRowMapper());
         if(result.isEmpty()) return null;
         return result.get(0);
     }
 
-    String getJsonById(Long id) {
-        List<Document> result = jdbcTemplate.query("select * from ? whre id=", new DocumentRowMapper(), new Object[]{TABLE_NAME,id});
-        if(result.isEmpty()) return "{}";
+//    String getJsonById(Long id) {
+//        List<Document> result = jdbcTemplate.query("select * from " + TABLE_NAME + " where id=" + id + ";", new DocumentRowMapper());
+//        if(result.isEmpty()) return "{}";
+//
+//        Document document = result.get(0);
+//        Doctype doctype = doctypeDao.getById(document.getDoctypeId());
+//
+//        try {
+//            return documentToJson(document,doctype);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return "{}";
+//        }
+//    }
 
-        Document document = result.get(0);
+    JSONObject documentToJson(Document document) throws Exception {
+//        if(doctype.getId() != document.getDoctypeId()) throw new Exception("Document has other doctype");
+//        StringBuilder json = new StringBuilder();
+//        List<String> namesList = doctype.getFields();
+//        List<String> valueList = document.getFieldsValues();
+//
+//        json.append("{\"id\":\"").append(document.getId()).append("\",\"original\":\"")
+//                .append(doctype.getOriginalLocationUrl()).append(document.getOriginal()).append("\",\"checked\":")
+//                .append(document.isChecked());
+//
+//        for(int i = 0; i < valueList.size(); i++) {
+//            json.append(",\"").append(namesList.get(i)).append("\":")
+//                    .append("\"").append(valueList.get(i)).append("\"");
+//        }
+//        json.append("}");
+//
+//        return json.toString();
+        JSONObject jsonDocument = new JSONObject();
+
         Doctype doctype = doctypeDao.getById(document.getDoctypeId());
 
-        try {
-            return documentToJson(document,doctype);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{}";
-        }
-    }
+        if(doctype == null) throw new Exception("No doctype with id " + document.getDoctypeId());
 
-    String documentToJson(Document document, Doctype doctype) throws Exception {
-        if(doctype.getId() != document.getDoctypeId()) throw new Exception("Document has other doctype");
-        StringBuilder json = new StringBuilder();
         List<String> namesList = doctype.getFields();
         List<String> valueList = document.getFieldsValues();
 
-        json.append("{\"id\":\"").append(document.getId()).append("\",\"original\":\"")
-                .append(doctype.getOriginalLocationUrl()).append(document.getOriginal()).append("\",\"checked\":")
-                .append(document.isChecked());
+        jsonDocument.put("id",document.getId());
+        jsonDocument.put("original",doctype.getOriginalLocationUrl() + document.getOriginal());
+        jsonDocument.put("checked",document.isChecked());
 
-        for(int i = 0; i < valueList.size(); i++) {
-            json.append(",\"").append(namesList.get(i)).append("\":")
-                    .append("\"").append(valueList.get(i)).append("\"");
+        for(int i = 0; i < namesList.size(); i++) {
+            jsonDocument.put(namesList.get(i),valueList.get(i));
         }
-        json.append("}");
-
-        return json.toString();
+        return jsonDocument;
     }
 
     public boolean update(Document document) {

@@ -1,6 +1,10 @@
 package ru.hacakthon.team2.document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,41 +28,58 @@ public class DocumentController {
     DoctypeDao doctypeDao;
 
     @GetMapping
-    public String getDocumentsByDoctype(@RequestParam(required = true) Long doctypeId) throws Exception {
-        return documentDao.getAllByDoctypeInJson(doctypeId);
+    public ResponseEntity getDocumentsByDoctype(@RequestParam(required = true) Long doctypeId) throws Exception {
+        if(doctypeDao.getById(doctypeId) == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No doctype with id " + doctypeId);
+
+        List<Document> documentList = documentDao.getAllByDoctype(doctypeId);
+
+        JSONArray documentArray = new JSONArray();
+
+        for(Document document : documentList) {
+            documentArray.add(documentDao.documentToJson(document));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(documentArray.toJSONString());
     }
 
     @GetMapping("/{id}")
-    public String getDocumentById(@PathVariable Long id) {
-        return documentDao.getJsonById(id);
+    public ResponseEntity getDocumentById(@PathVariable Long id) throws Exception {
+        Document document = documentDao.getById(id);
+
+        if(document == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No document with id " + id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(documentDao.documentToJson(document).toJSONString());
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> updateDocument(@PathVariable Long id, @RequestBody String jsonDocument) throws Exception {
+    public ResponseEntity updateDocument(@PathVariable Long id, @RequestBody String jsonDocumentString) throws Exception {
 
-        Map<String,Object> mapDocument = new ObjectMapper().readValue(jsonDocument, Map.class);
+        JSONObject jsonDocument = (JSONObject) JSONValue.parse(jsonDocumentString);
 
         Document documentToUpdate = documentDao.getById(id);
 
-        if(documentToUpdate == null) throw new Exception("No document with id " + id);
+        if(documentToUpdate == null) return ResponseEntity.status(HttpStatus.OK).body("No document with id " + id + " found");
 
         Doctype doctype = doctypeDao.getById(documentToUpdate.getDoctypeId());
 
-        documentToUpdate.setChecked((boolean) mapDocument.get("checked"));
-        documentToUpdate.setOriginal(mapDocument.get("original").toString());
+        documentToUpdate.setChecked(Boolean.valueOf(jsonDocument.get("checked").toString()));
+        documentToUpdate.setOriginal(jsonDocument.get("original").toString());
 
-        List<String> fieldsValues = new ArrayList<>();
+        List<String> fieldNames = doctype.getFields();
 
-        for(String fieldName : doctype.getFields()) {
-            String fieldValue = mapDocument.get(fieldName).toString();
+        List<String> newFieldValues = new ArrayList<>();
 
-            if(fieldValue == null) throw new Exception("No field: " + fieldName);
+        for(String fieldName : fieldNames) {
+            String fieldValue = jsonDocument.get(fieldName).toString();
+
+            if(fieldValue == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No field " + fieldName + " found");
+
+            newFieldValues.add(fieldValue);
         }
-        documentToUpdate.setFieldsValues(fieldsValues);
+        documentToUpdate.setFieldsValues(newFieldValues);
 
         boolean updated = documentDao.update(documentToUpdate);
 
-        if(updated) return ResponseEntity.status(HttpStatus.OK).body(documentDao.getJsonById(id));
-        else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Document was not updated");
+        if(updated) return ResponseEntity.status(HttpStatus.OK).body(documentDao.documentToJson(documentDao.getById(id)).toJSONString());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Update failed");
     }
 }

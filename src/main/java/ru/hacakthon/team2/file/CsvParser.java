@@ -16,7 +16,7 @@ import java.util.*;
 @Component
 public class CsvParser {
 
-    private final String ORIGINAL_HEADER = "оригинал";
+    private final String ORIGINAL_HEADER = "файл";
 
     public List<ParsedDocument> parseCsv(Path csvFile, Doctype doctype) throws IOException {
         Reader in = new FileReader(csvFile.toFile(), Charset.forName("windows-1251"));
@@ -45,7 +45,7 @@ public class CsvParser {
             String originalFile = currentRecord.get(original);
 
             if(!originalFile.endsWith(".pdf")) {
-                System.out.println("Error in line " + (i + 1) + ": line does not have proper original file. Skipping");
+                System.out.println("Error in line " + (i + 1) + ": line does not have proper original file: " + originalFile + ". Skipping");
             }
             List<String> fieldsValues = new ArrayList<>();
 
