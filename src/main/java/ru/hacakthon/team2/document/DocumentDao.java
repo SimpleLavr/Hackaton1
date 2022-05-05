@@ -24,10 +24,10 @@ public class DocumentDao {
 
     public void create(List<String> fieldValues, Long doctypeId, String original) {
 
-        StringBuilder query = new StringBuilder().append("insert into documents(doctype_id,original,fields_values) values(")
+        StringBuilder query = new StringBuilder().append("insert into documents(doctype_id,original,fields_values,checked) values(")
                 .append(doctypeId + ",")
                 .append("\'" + original + "\',")
-                .append(SqlUtils.toSqlArray(fieldValues) + ");");
+                .append(SqlUtils.toSqlArray(fieldValues) + ",false);");
         System.out.println(query.toString());
         jdbcTemplate.execute(query.toString());
     }

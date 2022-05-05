@@ -10,7 +10,7 @@ public class SqlUtils {
         String array = "\'{";
 
         for (String value : list) {
-            array += ",\"" + StringEscapeUtils.escapeSql(value) + "\"";
+            array += ",\"" + StringEscapeUtils.escapeSql(value).replaceAll("\"", "\\\\\"") + "\"";
         }
         array = array.replaceFirst(",", "") + "}\'";
         return array;
