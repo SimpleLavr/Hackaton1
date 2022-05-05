@@ -10,6 +10,7 @@ import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/upload")
+@CrossOrigin
 public class FileController {
 
     @Autowired
