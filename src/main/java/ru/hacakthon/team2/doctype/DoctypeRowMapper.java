@@ -12,9 +12,10 @@ public class DoctypeRowMapper implements RowMapper<Doctype> {
     @Override
     public Doctype mapRow(ResultSet rs, int rowNum) throws SQLException {
         Doctype doctype = new Doctype();
-        doctype.setId(rs.getLong(1));
-        doctype.setName(rs.getString(2));
-        doctype.setFields(Arrays.stream((String[]) rs.getArray(3).getArray()).collect(Collectors.toList()));
+        doctype.setId(rs.getLong("id"));
+        doctype.setName(rs.getString("name"));
+        doctype.setOriginalLocationUrl(rs.getString("original_url"));
+        doctype.setFields(Arrays.stream((String[]) rs.getArray("fields").getArray()).collect(Collectors.toList()));
         return doctype;
     }
 }

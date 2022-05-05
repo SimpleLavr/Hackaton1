@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import ru.hacakthon.team2.utils.SqlUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
@@ -32,23 +33,19 @@ public class DoctypeDao {
 //    }
 
     public void create(Doctype doctype) {
-        String array = "'{";
 
-        for (String fieldName : doctype.getFields()) {
-            array += ",\"" + fieldName + "\"";
-        }
-        array = array.replaceFirst(",", "") + "}\'";
-        String query = "insert into " + TABLE_NAME + "(name,fields) values(\'" + doctype.getName() + "\'," + array + ");";
+        String query = "insert into " + TABLE_NAME + "(name,original_url,fields) values(\'" + doctype.getName() + "\'," +
+               "\'" + doctype.getOriginalLocationUrl() + "\'," + SqlUtils.toSqlArray(doctype.getFields()) + ");";
         System.out.print(query);
         jdbcTemplate.execute(query);
     }
 
     public List<Doctype> getAll() {
-        return jdbcTemplate.query("select id,name,fields from " + TABLE_NAME + ";", new DoctypeRowMapper());
+        return jdbcTemplate.query("select * from " + TABLE_NAME + ";", new DoctypeRowMapper());
     }
 
     public Doctype getById(Long id) {
-        List<Doctype> resultList = jdbcTemplate.query("select id,name,fields from " + TABLE_NAME + "where id=?;", new DoctypeRowMapper(), new Object[]{id});
+        List<Doctype> resultList = jdbcTemplate.query("select * " + TABLE_NAME + "where id=?;", new DoctypeRowMapper(), new Object[]{id});
         if(resultList.isEmpty()) return null;
         else return resultList.get(0);
     }

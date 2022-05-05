@@ -9,6 +9,8 @@ public class Doctype {
 
     private List<String> fields;
 
+    private String originalLocationUrl;
+
     private String name;
 
     public Long getId() {
@@ -33,5 +35,13 @@ public class Doctype {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getOriginalLocationUrl() {
+        return originalLocationUrl;
+    }
+
+    public void setOriginalLocationUrl(String originalLocationUrl) {
+        this.originalLocationUrl = originalLocationUrl;
     }
 }

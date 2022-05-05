@@ -16,7 +16,7 @@ public class FileController {
     private IStorageService storageService;
 
     @PostMapping
-    public ResponseEntity<?> uploadFile(@RequestBody MultipartFile file) throws Exception {
+    public ResponseEntity<?> uploadFile(@RequestBody MultipartFile file, @PathVariable Long doctypeId) throws Exception {
         Path savedFile = null;
         if(!file.getResource().getFilename().endsWith(".csv")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is not csv table");
         try {
