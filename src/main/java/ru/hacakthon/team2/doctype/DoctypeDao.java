@@ -1,5 +1,6 @@
 package ru.hacakthon.team2.doctype;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,7 +35,7 @@ public class DoctypeDao {
 
     public void create(Doctype doctype) {
 
-        String query = "insert into " + TABLE_NAME + "(name,original_url,fields) values(\'" + doctype.getName() + "\'," +
+        String query = "insert into " + TABLE_NAME + "(name,original_url,fields) values(\'" + StringEscapeUtils.escapeSql(doctype.getName()) + "\'," +
                "\'" + doctype.getOriginalLocationUrl() + "\'," + SqlUtils.toSqlArray(doctype.getFields()) + ");";
         System.out.print(query);
         jdbcTemplate.execute(query);

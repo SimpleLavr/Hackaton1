@@ -1,5 +1,7 @@
 package ru.hacakthon.team2.utils;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import java.util.List;
 
 public class SqlUtils {
@@ -8,7 +10,7 @@ public class SqlUtils {
         String array = "\'{";
 
         for (String value : list) {
-            array += ",\"" + value + "\"";
+            array += ",\"" + StringEscapeUtils.escapeSql(value) + "\"";
         }
         array = array.replaceFirst(",", "") + "}\'";
         return array;
