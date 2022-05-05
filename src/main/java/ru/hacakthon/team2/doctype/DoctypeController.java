@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/doctype")
+@CrossOrigin
 public class DoctypeController {
 
     @Autowired
