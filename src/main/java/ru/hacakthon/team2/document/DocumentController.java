@@ -52,6 +52,7 @@ public class DocumentController {
 
     @PostMapping("/{id}")
     public ResponseEntity updateDocument(@PathVariable Long id, @RequestBody String jsonDocumentString) throws Exception {
+        System.out.println(jsonDocumentString);
 
         JSONObject jsonDocument = (JSONObject) JSONValue.parse(jsonDocumentString);
 
@@ -62,7 +63,7 @@ public class DocumentController {
         Doctype doctype = doctypeDao.getById(documentToUpdate.getDoctypeId());
 
         documentToUpdate.setChecked(Boolean.valueOf(jsonDocument.get("checked").toString()));
-        documentToUpdate.setOriginal(jsonDocument.get("original").toString());
+        documentToUpdate.setOriginal(jsonDocument.get("original").toString().replace(doctype.getOriginalLocation(), ""));
 
         List<String> fieldNames = doctype.getFields();
 
