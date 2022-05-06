@@ -42,6 +42,7 @@ public class FileController {
             savedFile = storageService.store(file);
         } catch (Exception e) {
             e.printStackTrace();
+            if(savedFile != null) savedFile.toFile().delete();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 

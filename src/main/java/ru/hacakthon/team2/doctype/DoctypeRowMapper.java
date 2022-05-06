@@ -14,7 +14,7 @@ public class DoctypeRowMapper implements RowMapper<Doctype> {
         Doctype doctype = new Doctype();
         doctype.setId(rs.getLong("id"));
         doctype.setName(rs.getString("name"));
-        doctype.setOriginalLocationUrl(rs.getString("original_url"));
+        doctype.setOriginalLocation(rs.getString("original_url"));
         doctype.setFields(Arrays.stream((String[]) rs.getArray("fields").getArray()).collect(Collectors.toList()));
         return doctype;
     }

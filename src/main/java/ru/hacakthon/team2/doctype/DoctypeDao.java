@@ -36,7 +36,7 @@ public class DoctypeDao {
     public void create(Doctype doctype) {
 
         String query = "insert into " + TABLE_NAME + "(name,original_url,fields) values(\'" + StringEscapeUtils.escapeSql(doctype.getName()) + "\'," +
-               "\'" + doctype.getOriginalLocationUrl() + "\'," + SqlUtils.toSqlArray(doctype.getFields()) + ");";
+               "\'" + doctype.getOriginalLocation() + "\'," + SqlUtils.toSqlArray(doctype.getFields()) + ");";
         System.out.print(query);
         jdbcTemplate.execute(query);
     }

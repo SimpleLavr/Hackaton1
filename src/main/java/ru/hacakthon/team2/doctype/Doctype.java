@@ -9,7 +9,15 @@ public class Doctype {
 
     private List<String> fields;
 
-    private String originalLocationUrl;
+    private String originalLocation;
+
+    public String getOriginalLocation() {
+        return originalLocation;
+    }
+
+    public void setOriginalLocation(String originalLocation) {
+        this.originalLocation = originalLocation;
+    }
 
     private String name;
 
@@ -37,11 +45,4 @@ public class Doctype {
         this.name = name;
     }
 
-    public String getOriginalLocationUrl() {
-        return originalLocationUrl;
-    }
-
-    public void setOriginalLocationUrl(String originalLocationUrl) {
-        this.originalLocationUrl = originalLocationUrl;
-    }
 }
