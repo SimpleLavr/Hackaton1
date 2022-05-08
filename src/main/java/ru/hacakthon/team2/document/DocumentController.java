@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,32 +23,48 @@ import java.util.Map;
 public class DocumentController {
 
     @Autowired
-    DocumentDao documentDao;
+    private DocumentDao documentDao;
 
     @Autowired
-    DoctypeDao doctypeDao;
+    private DoctypeDao doctypeDao;
+
+    @Autowired
+    private DocumentUtils documentUtils;
 
     @GetMapping
     public ResponseEntity getDocumentsByDoctype(@RequestParam(required = true) Long doctypeId) throws Exception {
         if(doctypeDao.getById(doctypeId) == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No doctype with id " + doctypeId);
 
-        List<Document> documentList = documentDao.getAllByDoctype(doctypeId);
+        List<Document> documentList;
+
+        try {
+            documentList = documentDao.getAllByDoctype(doctypeId);
+        } catch(DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request failed: " + e.getMessage());
+        }
 
         JSONArray documentArray = new JSONArray();
 
         for(Document document : documentList) {
-            documentArray.add(documentDao.documentToJson(document));
+            documentArray.add(documentUtils.documentToJson(document));
         }
         return ResponseEntity.status(HttpStatus.OK).body(documentArray.toJSONString());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getDocumentById(@PathVariable Long id) throws Exception {
-        Document document = documentDao.getById(id);
+
+        Document document;
+
+        try {
+            document = documentDao.getById(id);
+        } catch(DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request failed: " + e.getMessage());
+        }
 
         if(document == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No document with id " + id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(documentDao.documentToJson(document).toJSONString());
+        return ResponseEntity.status(HttpStatus.OK).body(documentUtils.documentToJson(document).toJSONString());
     }
 
     @PostMapping("/{id}")
@@ -78,9 +95,14 @@ public class DocumentController {
         }
         documentToUpdate.setFieldsValues(newFieldValues);
 
-        boolean updated = documentDao.update(documentToUpdate);
+        boolean updated;
+        try {
+            updated = documentDao.update(documentToUpdate);
+        } catch(DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request failed: " + e.getMessage());
+        }
 
-        if(updated) return ResponseEntity.status(HttpStatus.OK).body(documentDao.documentToJson(documentDao.getById(id)).toJSONString());
+        if(updated) return ResponseEntity.status(HttpStatus.OK).body(documentUtils.documentToJson(documentDao.getById(id)).toJSONString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Update failed");
     }
 }

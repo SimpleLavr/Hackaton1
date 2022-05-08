@@ -9,7 +9,7 @@ import java.nio.file.Path;
 public class DocumentLoader {
 
     @Autowired
-    DoctypeDao doctypeDao;
+    private DoctypeDao doctypeDao;
 
     public void loadDocument(Long doctypeId, Path csvFile) throws Exception {
         Doctype doctype = doctypeDao.getById(doctypeId);

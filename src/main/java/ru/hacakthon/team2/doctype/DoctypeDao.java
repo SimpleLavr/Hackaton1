@@ -21,7 +21,7 @@ public class DoctypeDao {
     private static final String TABLE_NAME = "document_types";
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
 //    public void create(Doctype doctype) {
 //        String columnNames = "";
