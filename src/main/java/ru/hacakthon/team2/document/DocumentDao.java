@@ -26,10 +26,10 @@ public class DocumentDao {
 
     public void create(List<String> fieldValues, Long doctypeId, String original) {
 
-        StringBuilder query = new StringBuilder().append("insert into documents(doctype_id,original,fields_values,checked) values(")
+        StringBuilder query = new StringBuilder().append("insert into documents(doctype_id,original,fields_values,checked,changed) values(")
                 .append(doctypeId + ",")
                 .append("\'" + original + "\',")
-                .append(SqlUtils.toSqlArray(fieldValues) + ",false);");
+                .append(SqlUtils.toSqlArray(fieldValues) + ",false,false);");
         System.out.println(query.toString());
         jdbcTemplate.execute(query.toString());
     }
@@ -53,8 +53,16 @@ public class DocumentDao {
         StringBuilder query = new StringBuilder();
         query.append("update ").append(TABLE_NAME).append(" set original = \'").append(document.getOriginal())
                 .append("\',checked = ").append(document.isChecked())
+                .append(",changed = ").append(document.isChanged())
                 .append(",fields_values = ").append(SqlUtils.toSqlArray(document.getFieldsValues()))
                 .append(" where id = ").append(document.getId()).append(";");
+        return jdbcTemplate.update(query.toString()) > 0 ? true : false;
+    }
+
+    public boolean delete(Long id) {
+        StringBuilder query = new StringBuilder();
+        query.append("delete from").append(TABLE_NAME)
+                .append(" where id = ").append(id).append(";");
         return jdbcTemplate.update(query.toString()) > 0 ? true : false;
     }
 }

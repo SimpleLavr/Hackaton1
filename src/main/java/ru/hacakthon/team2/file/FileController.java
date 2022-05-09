@@ -30,7 +30,8 @@ public class FileController {
     private DocumentDao documentDao;
 
     @PostMapping
-    public ResponseEntity<?> uploadFile(@RequestBody MultipartFile file, @RequestParam Long doctypeId) throws Exception {
+    public ResponseEntity<?> uploadFile(@RequestBody MultipartFile file, @RequestParam Long doctypeId,
+                                        @PathVariable(required = false) boolean updateDuplicates) throws Exception {
 
         Doctype doctype = doctypeDao.getById(doctypeId);
 
@@ -46,7 +47,7 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
-        List<ParsedDocument> parsedDocuments = csvParser.parseCsv(savedFile, doctype);
+        List<ParsedDocument> parsedDocuments = csvParser.parseCsv(savedFile, doctype, updateDuplicates);
 
         for(ParsedDocument parsedDocument : parsedDocuments) {
             documentDao.create(parsedDocument.getFieldValues(), doctypeId, parsedDocument.getOriginal());

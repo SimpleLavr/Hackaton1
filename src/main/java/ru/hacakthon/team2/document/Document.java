@@ -1,7 +1,5 @@
 package ru.hacakthon.team2.document;
 
-import ru.hacakthon.team2.doctype.Doctype;
-
 import java.util.List;
 
 public class Document {
@@ -15,6 +13,16 @@ public class Document {
     private String original;
 
     private boolean checked;
+
+    private boolean changed;
+
+    public boolean isChanged() {
+        return changed;
+    }
+
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+    }
 
     public Long getId() {
         return id;

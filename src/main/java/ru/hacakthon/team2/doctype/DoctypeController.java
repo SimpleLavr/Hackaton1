@@ -1,5 +1,7 @@
 package ru.hacakthon.team2.doctype;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import java.util.List;
 @RequestMapping("/doctype")
 @CrossOrigin
 public class DoctypeController {
+
+    private final Logger logger = LoggerFactory.getLogger(DoctypeController.class);
 
     @Autowired
     private DoctypeDao doctypeDao;
@@ -28,6 +32,8 @@ public class DoctypeController {
 
     @PostMapping
     public ResponseEntity create(@RequestBody Doctype doctype) {
+        logger.info("bruh, fucking logger works");
+        logger.debug("redspyis");
         if(!doctype.getOriginalLocation().endsWith("/")) doctype.setOriginalLocation(doctype.getOriginalLocation() + "/");
 
         try {

@@ -1,8 +1,9 @@
 package ru.hacakthon.team2.file;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ParsedDocument {
+public class ParsedDocument implements Serializable {
 
     private List<String> fieldValues;
     private String original;

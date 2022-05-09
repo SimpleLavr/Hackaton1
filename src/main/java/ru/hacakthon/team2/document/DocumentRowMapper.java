@@ -17,6 +17,7 @@ public class DocumentRowMapper implements RowMapper<Document> {
         document.setId(rs.getLong("id"));
         document.setOriginal(rs.getString("original"));
         document.setChecked(rs.getBoolean("checked"));
+        document.setChanged(rs.getBoolean("changed"));
         document.setFieldsValues(Arrays.stream((String[]) rs.getArray("fields_values").getArray()).collect(Collectors.toList()));
 
         return document;

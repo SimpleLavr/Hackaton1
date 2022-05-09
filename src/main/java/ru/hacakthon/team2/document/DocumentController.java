@@ -10,6 +10,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hacakthon.team2.changes.ChangesDao;
 import ru.hacakthon.team2.doctype.Doctype;
 import ru.hacakthon.team2.doctype.DoctypeDao;
 
@@ -29,11 +30,14 @@ public class DocumentController {
     private DoctypeDao doctypeDao;
 
     @Autowired
-    private DocumentUtils documentUtils;
+    private ChangesDao changesDao;
 
     @GetMapping
-    public ResponseEntity getDocumentsByDoctype(@RequestParam(required = true) Long doctypeId) throws Exception {
-        if(doctypeDao.getById(doctypeId) == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No doctype with id " + doctypeId);
+    public ResponseEntity getDocumentsByDoctype(@RequestParam(required = true) Long doctypeId,
+                                                @RequestParam(required = false) boolean getOriginal) throws Exception {
+        Doctype doctype = doctypeDao.getById(doctypeId);
+
+        if(doctype == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No doctype with id " + doctypeId);
 
         List<Document> documentList;
 
@@ -46,13 +50,17 @@ public class DocumentController {
         JSONArray documentArray = new JSONArray();
 
         for(Document document : documentList) {
-            documentArray.add(documentUtils.documentToJson(document));
+
+            List<String> updatedFieldsValues = changesDao.getValuesListByDocumentId(document.getId());
+            if(updatedFieldsValues != null && !getOriginal) document.setFieldsValues(updatedFieldsValues);
+
+            documentArray.add(DocumentUtils.documentToJson(document, doctype));
         }
         return ResponseEntity.status(HttpStatus.OK).body(documentArray.toJSONString());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getDocumentById(@PathVariable Long id) throws Exception {
+    public ResponseEntity getDocumentById(@PathVariable Long id, @RequestParam(required = false) boolean getOriginal) throws Exception {
 
         Document document;
 
@@ -64,7 +72,13 @@ public class DocumentController {
 
         if(document == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No document with id " + id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(documentUtils.documentToJson(document).toJSONString());
+        List<String> updatedFieldsValues = changesDao.getValuesListByDocumentId(id);
+
+        if(updatedFieldsValues != null && !getOriginal) document.setFieldsValues(updatedFieldsValues);
+
+        Doctype doctype = doctypeDao.getById(document.getDoctypeId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(DocumentUtils.documentToJson(document, doctype).toJSONString());
     }
 
     @PostMapping("/{id}")
@@ -77,10 +91,15 @@ public class DocumentController {
 
         if(documentToUpdate == null) return ResponseEntity.status(HttpStatus.OK).body("No document with id " + id + " found");
 
+        if(!DocumentUtils.getChecksum(documentToUpdate).equals(jsonDocument.get("checksum")))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Update request for document " + documentToUpdate.getId() +
+                    " failed: checksums do not match. Please refresh document");
+
         Doctype doctype = doctypeDao.getById(documentToUpdate.getDoctypeId());
 
         documentToUpdate.setChecked(Boolean.valueOf(jsonDocument.get("checked").toString()));
-        documentToUpdate.setOriginal(jsonDocument.get("original").toString().replace(doctype.getOriginalLocation(), ""));
+//        documentToUpdate.setOriginal(jsonDocument.get("original").toString().replace(doctype.getOriginalLocation(), ""));
+        documentToUpdate.setChanged(true);
 
         List<String> fieldNames = doctype.getFields();
 
@@ -93,7 +112,9 @@ public class DocumentController {
 
             newFieldValues.add(fieldValue);
         }
-        documentToUpdate.setFieldsValues(newFieldValues);
+//        documentToUpdate.setFieldsValues(newFieldValues);
+
+        changesDao.createOrUpdate(newFieldValues, id);
 
         boolean updated;
         try {
@@ -102,7 +123,7 @@ public class DocumentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request failed: " + e.getMessage());
         }
 
-        if(updated) return ResponseEntity.status(HttpStatus.OK).body(documentUtils.documentToJson(documentDao.getById(id)).toJSONString());
+        if(updated) return ResponseEntity.status(HttpStatus.OK).body(DocumentUtils.documentToJson(documentDao.getById(id), doctype).toJSONString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Update failed");
     }
 }
