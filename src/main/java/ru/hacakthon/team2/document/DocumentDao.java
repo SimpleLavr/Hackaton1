@@ -43,7 +43,7 @@ public class DocumentDao {
         return documentList;
     }
 
-    Document getById(Long id) {
+    public Document getById(Long id) {
         List<Document> result = jdbcTemplate.query("select * from " + TABLE_NAME + " where id=" + id + ";", new DocumentRowMapper());
         if(result.isEmpty()) return null;
         return result.get(0);
@@ -77,5 +77,45 @@ public class DocumentDao {
         if(!resultSet.next()) return null;
 
         return resultSet.getLong("id");
+    }
+
+    public int getDocumentNumber(Long doctypeId) {
+        StringBuilder query = new StringBuilder();
+        query.append("select count(id) from ").append(TABLE_NAME)
+                .append(";");
+
+        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query.toString());
+        resultSet.next();
+        return resultSet.getInt("count");
+    }
+
+    public int getChangedDocumentsNumber(Long doctypeId) {
+        StringBuilder query = new StringBuilder();
+        query.append("select count(id) from ").append(TABLE_NAME)
+                .append(" where changed = true;");
+
+        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query.toString());
+        resultSet.next();
+        return resultSet.getInt("count");
+    }
+
+    public int getCheckedDocumentsNumber(Long doctypeId) {
+        StringBuilder query = new StringBuilder();
+        query.append("select count(id) from ").append(TABLE_NAME)
+                .append(" where checked = true");
+
+        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query.toString());
+        resultSet.next();
+        return resultSet.getInt("count");
+    }
+
+    public int getCheckedAndChangedDocumentsNumber(Long doctypeId) {
+        StringBuilder query = new StringBuilder();
+        query.append("select count(id) from ").append(TABLE_NAME)
+                .append(" where checked = true and changed = true");
+
+        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query.toString());
+        resultSet.next();
+        return resultSet.getInt("count");
     }
 }

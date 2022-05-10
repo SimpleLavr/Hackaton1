@@ -7,37 +7,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.hacakthon.team2.changes.ChangesDao;
 import ru.hacakthon.team2.doctype.Doctype;
 import ru.hacakthon.team2.document.Document;
 import ru.hacakthon.team2.document.DocumentDao;
 import ru.hacakthon.team2.utils.SqlUtils;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class CsvParser {
 
     private final String ORIGINAL_HEADER = "файл";
 
+    private final Charset WINDOWS_1251 = Charset.forName("windows-1251");
+
     private final Logger logger = LoggerFactory.getLogger(CsvParser.class);
 
     @Autowired
     private DocumentDao documentDao;
 
-    public List<ParsedDocument> parseCsv(Path csvFile, Doctype doctype, boolean updateDuplicates) throws Exception {
+    public List<ParsedDocument> readCsv(Path csvFile, Doctype doctype, boolean updateDuplicates) throws Exception {
 
         List<CsvRow> rows = CsvReader.builder()
                 .fieldSeparator(';')
                 .quoteCharacter('"')
-                .build(csvFile, Charset.forName("windows-1251"))
+                .build(csvFile, WINDOWS_1251)
                 .stream().toList();
 
         int original = -1;
@@ -81,12 +78,14 @@ public class CsvParser {
                 logger.debug("Line {} is a duplicate of a document with id {}...", i + 1, existingDocumentId);
                 if(updateDuplicates) {
                     logger.debug("...update_duplicates == true, updating line {}", i + 1);
-                    documentDao.delete(existingDocumentId);
+                    Document documentToUpdate = documentDao.getById(existingDocumentId);
+                    documentToUpdate.setFieldsValues(fieldsValues);
+                    documentDao.update(documentToUpdate);
                 }
                 else {
                     logger.debug("...update duplicates == false, skipping line {}", i + 1);
-                    continue;
                 }
+                continue;
             }
 
             parsedDocuments.add(parsedDocument);

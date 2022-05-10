@@ -111,7 +111,6 @@ public class DocumentController {
 
         documentToUpdate.setChecked(Boolean.valueOf(jsonDocument.get("checked").toString()));
 //        documentToUpdate.setOriginal(jsonDocument.get("original").toString().replace(doctype.getOriginalLocation(), ""));
-        documentToUpdate.setChanged(true);
 
         List<String> fieldNames = doctype.getFields();
 
@@ -126,7 +125,11 @@ public class DocumentController {
         }
 //        documentToUpdate.setFieldsValues(newFieldValues);
 
-        changesDao.createOrUpdate(newFieldValues, id);
+        if(!documentToUpdate.getFieldsValues().equals(newFieldValues)) {
+            documentToUpdate.setChanged(true);
+            changesDao.createOrUpdate(newFieldValues, id);
+        }
+
 
         boolean updated;
         try {
