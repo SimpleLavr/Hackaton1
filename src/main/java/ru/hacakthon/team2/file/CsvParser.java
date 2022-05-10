@@ -76,6 +76,8 @@ public class CsvParser {
             Long existingDocumentId = documentDao.getDocumentByValues(fieldsValues);
             if(existingDocumentId != null) {
                 logger.debug("Line {} is a duplicate of a document with id {}...", i + 1, existingDocumentId);
+
+                //TODO разобраться с тем как(и зачем) это должно работать
                 if(updateDuplicates) {
                     logger.debug("...update_duplicates == true, updating line {}", i + 1);
                     Document documentToUpdate = documentDao.getById(existingDocumentId);
@@ -98,7 +100,9 @@ public class CsvParser {
 
 
     //Returns hashMap of document <checksum, documentId>
-    // Checksum, however, is calculated only based on original and fieldsNames(or changes.fieldsNames, if document was updated)
+    //Checksum, however, is calculated only based on original and fieldsNames(or changes.fieldsNames, if document was updated)
+    //Does not work
+    @Deprecated
     public HashMap<Long, Long> getChecksumMap(Doctype doctype) throws Exception {
 
         List<Document> documentList = documentDao.getAllByDoctype(doctype.getId());

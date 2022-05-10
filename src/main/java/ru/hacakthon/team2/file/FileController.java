@@ -56,7 +56,7 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
-        List<ParsedDocument> parsedDocuments = csvParser.readCsv(savedFile, doctype, updateDuplicates);
+        List<ParsedDocument> parsedDocuments = csvParser.readCsv(savedFile, doctype, false);
 
         for(ParsedDocument parsedDocument : parsedDocuments) {
             documentDao.create(parsedDocument.getFieldValues(), doctypeId, parsedDocument.getOriginal());

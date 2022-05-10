@@ -82,9 +82,12 @@ public class DocumentController {
 
         Doctype doctype = doctypeDao.getById(document.getDoctypeId());
 
+        JSONObject jsonDocument = DocumentUtils.documentToJson(document, doctype);
+        jsonDocument.put("doctypeName", doctype.getName());
+
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(DocumentUtils.documentToJson(document, doctype).toJSONString());
+                .body(jsonDocument.toJSONString());
     }
 
     @PostMapping("/{id}")
@@ -130,14 +133,14 @@ public class DocumentController {
         }
 //        documentToUpdate.setFieldsValues(newFieldValues);
 
-        if(!documentToUpdate.getFieldsValues().equals(newFieldValues)) {
-            documentToUpdate.setChanged(true);
-            changesDao.createOrUpdate(newFieldValues, id);
-        }
 
 
         boolean updated;
         try {
+            if(!documentToUpdate.getFieldsValues().equals(newFieldValues)) {
+                documentToUpdate.setChanged(true);
+                changesDao.createOrUpdate(newFieldValues, id);
+            }
             updated = documentDao.update(documentToUpdate);
         } catch(DataAccessException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request failed: " + e.getMessage());
