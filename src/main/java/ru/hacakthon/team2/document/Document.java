@@ -9,13 +9,13 @@ public class Document implements Serializable {
 
     private Long doctypeId;
 
-    private List<String> fieldsValues;
+    private List<String> fieldsValues;  //Значения полей, ключи - в поле fields соответствующего доктайпа, индексы совпадают
 
     private String original;
 
-    private boolean checked;
+    private boolean checked;    //Был ли документ проверен
 
-    private boolean changed;
+    private boolean changed;    //Был ли документ(а именно - поля) изменен
 
     public boolean isChanged() {
         return changed;

@@ -33,8 +33,6 @@ public class DoctypeController {
 
     @PostMapping
     public ResponseEntity create(@RequestBody Doctype doctype) {
-        logger.info("bruh, fucking logger works");
-        logger.debug("redspyis");
         if(!doctype.getOriginalLocation().endsWith("/")) doctype.setOriginalLocation(doctype.getOriginalLocation() + "/");
 
         try {

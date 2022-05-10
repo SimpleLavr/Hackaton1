@@ -7,9 +7,9 @@ public class Doctype {
 
     private Long id;
 
-    private List<String> fields;
+    private List<String> fields;    //Названия полей(ключи)
 
-    private String originalLocation;
+    private String originalLocation;    //URL папки с файлами данного доктайпа
 
     public String getOriginalLocation() {
         return originalLocation;
