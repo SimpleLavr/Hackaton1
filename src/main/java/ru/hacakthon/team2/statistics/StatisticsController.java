@@ -4,15 +4,13 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.hacakthon.team2.doctype.Doctype;
 import ru.hacakthon.team2.doctype.DoctypeDao;
 import ru.hacakthon.team2.document.DocumentDao;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/statistics")
 public class StatisticsController {
 
