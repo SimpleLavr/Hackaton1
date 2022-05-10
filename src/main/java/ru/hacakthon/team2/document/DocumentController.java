@@ -8,6 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hacakthon.team2.changes.ChangesDao;
@@ -57,7 +58,9 @@ public class DocumentController {
 
             documentArray.add(DocumentUtils.documentToJson(document, doctype));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(documentArray.toJSONString());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(documentArray.toJSONString());
     }
 
     @GetMapping("/{id}")
@@ -79,12 +82,14 @@ public class DocumentController {
 
         Doctype doctype = doctypeDao.getById(document.getDoctypeId());
 
-        return ResponseEntity.status(HttpStatus.OK).body(DocumentUtils.documentToJson(document, doctype).toJSONString());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(DocumentUtils.documentToJson(document, doctype).toJSONString());
     }
 
     @PostMapping("/{id}")
     public ResponseEntity updateDocument(@PathVariable Long id, @RequestBody String jsonDocumentString) throws Exception {
-        System.out.println(jsonDocumentString);
+//        System.out.println(jsonDocumentString);
 
         JSONObject jsonDocument = (JSONObject) JSONValue.parse(jsonDocumentString);
 
@@ -138,7 +143,9 @@ public class DocumentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request failed: " + e.getMessage());
         }
 
-        if(updated) return ResponseEntity.status(HttpStatus.OK).body(DocumentUtils.documentToJson(documentDao.getById(id), doctype).toJSONString());
+        if(updated) return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body("Document with id " + id + " successfully updated");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Update failed");
     }
 }

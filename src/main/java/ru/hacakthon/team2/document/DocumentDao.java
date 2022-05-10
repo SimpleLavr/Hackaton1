@@ -30,7 +30,7 @@ public class DocumentDao {
                 .append(doctypeId + ",")
                 .append("\'" + original + "\',")
                 .append(SqlUtils.toSqlArray(fieldValues) + ",false,false);");
-        System.out.println(query.toString());
+//        System.out.println(query.toString());
         jdbcTemplate.execute(query.toString());
     }
 

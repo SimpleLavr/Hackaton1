@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,9 @@ public class DoctypeController {
         } catch(DataAccessException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request failed: " + e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Doctype " + doctype.getName() + " successfully created");
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body("Doctype " + doctype.getName() + " successfully created");
     }
 
     @DeleteMapping("/{id}")

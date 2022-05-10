@@ -3,6 +3,7 @@ package ru.hacakthon.team2.statistics;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,8 @@ public class StatisticsController {
         statistics.put("checked", documentDao.getCheckedDocumentsNumber(doctypeId));
         statistics.put("checkedWithErrors", documentDao.getCheckedAndChangedDocumentsNumber(doctypeId));
 
-        return ResponseEntity.status(HttpStatus.OK).body(statistics.toJSONString());
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(statistics.toJSONString());
     }
 }

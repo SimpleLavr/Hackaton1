@@ -64,7 +64,9 @@ public class FileController {
 
         savedFile.toFile().delete();
 
-        return ResponseEntity.status(HttpStatus.OK).body("File successfully uploaded");
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body("File successfully uploaded");
     }
 
     @GetMapping("/download")
