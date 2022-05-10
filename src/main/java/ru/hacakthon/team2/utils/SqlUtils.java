@@ -8,6 +8,7 @@ import ru.hacakthon.team2.document.Document;
 import java.io.*;
 import java.util.List;
 import java.util.zip.CRC32;
+import java.util.zip.CRC32C;
 import java.util.zip.CheckedInputStream;
 
 public class SqlUtils {
@@ -33,7 +34,7 @@ public class SqlUtils {
             oos = new ObjectOutputStream(baos);
             oos.writeObject(object);
 
-            oos.flush();
+             oos.flush();
             oos.close();
         } catch(IOException e) {
             logger.warn("Failed to get checksum of {}: {}", object.getClass(), e.getMessage());
@@ -45,6 +46,7 @@ public class SqlUtils {
         CheckedInputStream checkedInputStream = new CheckedInputStream(is, new CRC32());
         byte[] buffer = new byte[1024];
         while (checkedInputStream.read(buffer, 0, buffer.length) >= 0) {}
-        return checkedInputStream.getChecksum().getValue();
+        Long checksum = checkedInputStream.getChecksum().getValue();
+        return checksum;
     }
 }

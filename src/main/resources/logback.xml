@@ -24,10 +24,11 @@
         </encoder>
     </appender>
 
+    <logger name="ru.hacakthon.team2" level = "DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
     <root level="DEBUG">
         <appender-ref ref="FILE"/>
-    </root>
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
     </root>
 </configuration>

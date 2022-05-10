@@ -31,7 +31,7 @@ public class FileController {
 
     @PostMapping
     public ResponseEntity<?> uploadFile(@RequestBody MultipartFile file, @RequestParam Long doctypeId,
-                                        @PathVariable(required = false) boolean updateDuplicates) throws Exception {
+                                        @RequestParam(required = false) boolean updateDuplicates) throws Exception {
 
         Doctype doctype = doctypeDao.getById(doctypeId);
 

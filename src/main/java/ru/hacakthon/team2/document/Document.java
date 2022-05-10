@@ -1,8 +1,9 @@
 package ru.hacakthon.team2.document;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Document {
+public class Document implements Serializable {
 
     private Long id;
 

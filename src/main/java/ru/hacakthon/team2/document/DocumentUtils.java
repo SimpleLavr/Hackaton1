@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.hacakthon.team2.doctype.Doctype;
 import ru.hacakthon.team2.doctype.DoctypeDao;
+import ru.hacakthon.team2.utils.SqlUtils;
 
 import java.io.*;
 import java.util.List;
@@ -29,7 +30,7 @@ public class DocumentUtils {
         jsonDocument.put("id",document.getId());
         jsonDocument.put("original",doctype.getOriginalLocation() + document.getOriginal());
         jsonDocument.put("checked",document.isChecked());
-        jsonDocument.put("checksum", getChecksum(document));
+        jsonDocument.put("checksum", SqlUtils.getChecksum(document));
         jsonDocument.put("changed", document.isChanged());
 
         for(int i = 0; i < namesList.size(); i++) {

@@ -65,4 +65,17 @@ public class DocumentDao {
                 .append(" where id = ").append(id).append(";");
         return jdbcTemplate.update(query.toString()) > 0 ? true : false;
     }
+
+    public Long getDocumentByValues(List<String> values) {
+        StringBuilder query = new StringBuilder();
+
+        query.append("select id from ").append(TABLE_NAME)
+                .append(" where fields_values = ").append(SqlUtils.toSqlArray(values))
+                .append(";");
+
+        SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query.toString());
+        if(!resultSet.next()) return null;
+
+        return resultSet.getLong("id");
+    }
 }

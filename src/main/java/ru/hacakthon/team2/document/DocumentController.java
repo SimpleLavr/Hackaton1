@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.hacakthon.team2.changes.ChangesDao;
 import ru.hacakthon.team2.doctype.Doctype;
 import ru.hacakthon.team2.doctype.DoctypeDao;
+import ru.hacakthon.team2.utils.SqlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,9 +92,20 @@ public class DocumentController {
 
         if(documentToUpdate == null) return ResponseEntity.status(HttpStatus.OK).body("No document with id " + id + " found");
 
-        if(!DocumentUtils.getChecksum(documentToUpdate).equals(jsonDocument.get("checksum")))
+//        System.out.println(SqlUtils.getChecksum(documentToUpdate) + "\n"
+//        + Long.valueOf(jsonDocument.get("checksum").toString()) + "\n" +
+//                SqlUtils.getChecksum(documentToUpdate).equals(Long.valueOf(jsonDocument.get("checksum").toString())));
+
+        List<String> updatedFieldsValues = changesDao.getValuesListByDocumentId(id);
+
+        if(updatedFieldsValues != null) documentToUpdate.setFieldsValues(updatedFieldsValues);
+
+        if(!SqlUtils.getChecksum(documentToUpdate).equals(Long.valueOf(jsonDocument.get("checksum").toString())))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Update request for document " + documentToUpdate.getId() +
                     " failed: checksums do not match. Please refresh document");
+
+        //Снова получаем документ из базы, т.к. оригинальные значения полей были заменены
+        documentToUpdate = documentDao.getById(id);
 
         Doctype doctype = doctypeDao.getById(documentToUpdate.getDoctypeId());
 
