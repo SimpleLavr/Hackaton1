@@ -77,7 +77,7 @@ public class FileController {
 
         Path fileToWrite = storageService.load(doctype.getName() + "_fileForDownload.csv");
 
-        csvFileWriter.writeCsvFile(doctype, fileToWrite);
+        csvFileWriter.writeCsvFile(doctype, fileToWrite, true);
 
         Resource fileToSend = new ByteArrayResource(Files.readAllBytes(fileToWrite));
 

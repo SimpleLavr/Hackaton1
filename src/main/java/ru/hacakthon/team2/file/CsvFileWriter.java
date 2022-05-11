@@ -30,7 +30,7 @@ public class CsvFileWriter {
 
     private final Charset WINDOWS_1251 = Charset.forName("windows-1251");
 
-    public void writeCsvFile(Doctype doctype, Path fileToWrite) throws Exception {
+    public void writeCsvFile(Doctype doctype, Path fileToWrite, boolean getOnlyChecked) throws Exception {
         CsvWriter csvWriter = CsvWriter.builder()
                 .fieldSeparator(';')
                 .quoteCharacter('"')
@@ -38,6 +38,11 @@ public class CsvFileWriter {
                 .build(fileToWrite, WINDOWS_1251);
 
         List<Document> documentList = documentDao.getAllByDoctype(doctype.getId());
+
+        if(getOnlyChecked) {
+            for(Document document : documentList)
+                if(!document.isChecked()) documentList.remove(document);
+        }
 
         List<String> headerRow = doctype.getFields();
         headerRow.add("original file");

@@ -9,10 +9,10 @@
 
     <appender name="FILE"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./logs/cardCharityLog.log</file>
+        <file>./logs/hackathon.log</file>
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>cardCharityLog.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>./logs/Hackathon1.%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <maxHistory>10</maxHistory>
 
