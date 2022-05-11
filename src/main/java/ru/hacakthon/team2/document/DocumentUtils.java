@@ -30,7 +30,7 @@ public class DocumentUtils {
         jsonDocument.put("id",document.getId());
         jsonDocument.put("original",doctype.getOriginalLocation() + document.getOriginal());
         jsonDocument.put("checked",document.isChecked());
-        jsonDocument.put("checksum", SqlUtils.getChecksum(document));
+        jsonDocument.put("checksum", SqlUtils.getChecksum(document));  //Чексумма, для определения внешних изменений внесенных в документ
         jsonDocument.put("changed", document.isChanged());
 
         for(int i = 0; i < namesList.size(); i++) {
