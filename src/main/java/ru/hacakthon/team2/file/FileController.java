@@ -48,15 +48,15 @@ public class FileController {
 
         Path savedFile = null;
         if(!file.getResource().getFilename().endsWith(".csv")) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is not csv table");
+        List<ParsedDocument> parsedDocuments;
         try {
             savedFile = storageService.store(file);
+            parsedDocuments = csvParser.readCsv(savedFile, doctype, false);
         } catch (Exception e) {
             e.printStackTrace();
             if(savedFile != null) savedFile.toFile().delete();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
-        List<ParsedDocument> parsedDocuments = csvParser.readCsv(savedFile, doctype, false);
 
         for(ParsedDocument parsedDocument : parsedDocuments) {
             documentDao.create(parsedDocument.getFieldValues(), doctypeId, parsedDocument.getOriginal());
