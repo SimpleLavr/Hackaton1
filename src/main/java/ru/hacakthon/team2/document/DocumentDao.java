@@ -82,17 +82,21 @@ public class DocumentDao {
     public int getDocumentNumber(Long doctypeId) {
         StringBuilder query = new StringBuilder();
         query.append("select count(id) from ").append(TABLE_NAME)
+                .append(" where doctype_id = ").append(doctypeId)
                 .append(";");
+
 
         SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query.toString());
         resultSet.next();
-        return resultSet.getInt("count");
+        int documentNumber = resultSet.getInt("count");
+        return documentNumber;
     }
 
     public int getChangedDocumentsNumber(Long doctypeId) {
         StringBuilder query = new StringBuilder();
         query.append("select count(id) from ").append(TABLE_NAME)
-                .append(" where changed = true;");
+                .append(" where doctype_id = ").append(doctypeId)
+                .append(" and changed = true;");
 
         SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query.toString());
         resultSet.next();
@@ -102,7 +106,9 @@ public class DocumentDao {
     public int getCheckedDocumentsNumber(Long doctypeId) {
         StringBuilder query = new StringBuilder();
         query.append("select count(id) from ").append(TABLE_NAME)
-                .append(" where checked = true");
+                .append(" where doctype_id = ").append(doctypeId)
+                .append(" and checked = true;");
+
 
         SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query.toString());
         resultSet.next();
@@ -112,7 +118,8 @@ public class DocumentDao {
     public int getCheckedAndChangedDocumentsNumber(Long doctypeId) {
         StringBuilder query = new StringBuilder();
         query.append("select count(id) from ").append(TABLE_NAME)
-                .append(" where checked = true and changed = true");
+                .append(" where doctype_id = ").append(doctypeId)
+                .append(" and checked = true and changed = true;");
 
         SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query.toString());
         resultSet.next();

@@ -98,7 +98,9 @@ public class DocumentController {
 
         Document documentToUpdate = documentDao.getById(id);
 
-        if(documentToUpdate == null) return ResponseEntity.status(HttpStatus.OK).body("No document with id " + id + " found");
+        if(documentToUpdate == null) return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body("No document with id " + id + " found");
 
 //        System.out.println(SqlUtils.getChecksum(documentToUpdate) + "\n"
 //        + Long.valueOf(jsonDocument.get("checksum").toString()) + "\n" +

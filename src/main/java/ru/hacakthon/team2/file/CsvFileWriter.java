@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -39,9 +40,11 @@ public class CsvFileWriter {
 
         List<Document> documentList = documentDao.getAllByDoctype(doctype.getId());
 
+        //Если модифицировать коллекцию напрямую выдает ConcurrentModificationException
         if(getOnlyChecked) {
-            for(Document document : documentList)
-                if(!document.isChecked()) documentList.remove(document);
+            List<Document> checkedDocuemtnList = new ArrayList<>();
+            for(Document document : documentList) if(document.isChecked()) checkedDocuemtnList.add(document);
+            documentList = checkedDocuemtnList;
         }
 
         List<String> headerRow = doctype.getFields();
