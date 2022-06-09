@@ -42,4 +42,4 @@
 
 	- В структуре БД используются массивы postgres(https://www.postgresql.org/docs/13/arrays.html)
 
-	- Скрипт для создания БД - http://git.it-college.ru:8080/i21s708/Hackathon1/blob/master/hackathon.team2.database.sql
+	- Скрипт для создания БД - hackathon.team2.database.sql
